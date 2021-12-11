@@ -1,26 +1,140 @@
+---
+output: github_document
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#",
+  fig.path = "README-"
+)
+```
 
 # BIENVENIDOS!!!
 
 # ¿CÓMO ESTÁN TRABAJANDO LOS CONGRESISTAS DEL PERÚ - PROYECTOS DE LEY?
 
-Se crea este repositorio con el fin de poder conocer cómo están
-trabajando los congresistas de la república del Perú, específicamente en
-la presentación de proyectos de ley y en la concreción final de
-convertirse en ley.
+Se crea este repositorio con el fin de poder conocer cómo están trabajando los congresistas de la república del Perú, específicamente en la presentación de proyectos de ley y en la concreción final de convertirse en ley.
 
-Se muestra información del número de proyectos de ley y leyes por
-bancadas, regiones y por congresistas.
+Se muestra información del número de proyectos de ley y leyes por bancadas, regiones y por congresistas. 
 
-Esta información se extrajo desde el portal Voto informado. —&gt;
-<https://www.congreso.gob.pe/>
+Esta información se extrajo desde el portal Voto informado.  ---> https://www.congreso.gob.pe/
 
 ## ¿CÓMO ESTÁ TRABAJANDO EL CONGRESO?
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(rvest)
+library(dplyr)
+library(openxlsx)
+library(ggplot2)
+#devtools::install_github("CesarAHN/datametria")
+library(datametria)
+library(tidyr)
+library(stringr)
+library(ggrepel)
+#devtools::install_github("clauswilke/ggtextures")
+library(ggtextures)
+library(magick)
+library(raster)
+library(ggspatial)
+library(sf)
+
+# Lista de congresistas de la república. 
+
+pw <- read_html("https://www.congreso.gob.pe/congresistasregion/")
+
+congresistas<-pw %>% html_nodes("#objContents > div.modHTM > table") %>% html_table() %>% as.data.frame()
+
+congresistas<-congresistas[,2:4]
+congresistas<-na.omit(congresistas)
+
+for (i in 1:length(congresistas$Var.2)) {
+  if(congresistas$Var.2[i]==""){
+    congresistas$Var.2[i]<-congresistas$Var.2[i-1]
+  } 
+}
+
+congresistas<-congresistas %>% filter(Var.2!=APELLIDOS.Y.NOMBRES)
+
+congresistas[,1:3]<-apply(congresistas[,1:3],2,limpiecito)
+
+names(congresistas)<-c("REGION","Autores", "Partido")
+
+congresistas$Autores<-ifelse(grepl("BUSTAMANTE DONAYRE",congresistas$Autores),
+                             "BUSTAMANTE DONAYRE CARLOS ERNESTO",congresistas$Autores)
+congresistas$Autores<-ifelse(grepl("DIAZ MONAGO",congresistas$Autores),
+                             "DIAZ MONAGO FREDDY ROLAND",congresistas$Autores)
+congresistas$Autores<-ifelse(grepl("YOREL KIRA",congresistas$Autores),
+                             "ALCARRAZ AGÜERO YOREL KIRA",congresistas$Autores)
+
+congresistas$Partido<-ifelse(grepl("AGRUPADO",congresistas$Partido),"NO AGRUPADO",
+                             congresistas$Partido)
+congresistas$Partido<-ifelse(grepl("AVANZA PAIS",congresistas$Partido),
+                             "AVANZA PAIS", congresistas$Partido)
+
+#-------------------------------------------------------------------
+proy<-read.xlsx("ReporteProyectosLey.xlsx")
+
+names(proy)<-proy[1,]
+
+proy<-proy[-1,]
+
+proy[,1:6]<-apply(proy[,1:6], 2, limpiecito)
+
+proy<-proy %>% mutate(Autores = str_split(Autores, ";")) %>%
+  unnest()
+
+proy$Autores<-limpiecito(proy$Autores)
+proy$Autores<-gsub(",","", proy$Autores)
+
+# proy$Autores<-ifelse(is.na(proy$Autores), proy$Proponente, proy$Autores)
+
+# Solo congresistas. 
+proy<-proy[proy$Proponente=="CONGRESO",]
+
+# sum(is.na(proy$Autores))
+
+# proy[is.na(proy$Autores),] # 2 proyectos que no tienen autores.
+
+#-------------------------------------------------------------------
+# Juntando bases. 
+df<-left_join(proy, congresistas, by="Autores")
+# sum(is.na(df$Partido))
+
+# unique(df[is.na(df$Partido),]$Autores)
+
+df$Partido<-ifelse(grepl("HERRERA MAMANI FERNANDO",df$Autores),"PERU LIBRE", df$Partido)
+df$REGION<-ifelse(grepl("HERRERA MAMANI FERNANDO",df$Autores),"TACNA", df$REGION)
+
+tt<-tibble(Partido=c("ACCION POPULAR","FUERZA POPULAR","ALIANZA PARA EL PROGRESO","AVANZA PAIS",
+                     "JUNTOS POR EL PERU","NO AGRUPADO","PERU LIBRE","PODEMOS PERU",
+                     "RENOVACION POPULAR","SOMOS PERU"),
+           image=list(image_read("https://upload.wikimedia.org/wikipedia/commons/e/ed/Acci%C3%B3n_Popular.png"),
+                      image_read("https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Fuerza_popular.svg/1200px-Fuerza_popular.svg.png"),
+                      image_read("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Alianza_para_el_Progreso_Peru.svg/160px-Alianza_para_el_Progreso_Peru.svg.png"),
+                      image_read("https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Avanza_Pa%C3%ADs_2021.jpg/800px-Avanza_Pa%C3%ADs_2021.jpg"),
+                      image_read("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnCsB796Mu2XiOi8is51rafuf56gN41QQhFU4FDPaxNnAb8pjmXMKcELKjSi8v8G91JPE&usqp=CAU"),
+                      image_read("https://r.datametria.com/wp-content/uploads/2021/12/agrupado.png"),
+                      image_read("https://seeklogo.com/images/P/peru-libre-lapiz-logo-6FB42CF126-seeklogo.com.png"),
+                      image_read("https://upload.wikimedia.org/wikipedia/commons/0/07/Logo_Podemos_Per%C3%BA.png"),
+                      image_read("https://yt3.ggpht.com/ytc/AKedOLRUqtO4GNJob_QEoz7C4_5ZkZb8Eiu2HRfPjjrz=s900-c-k-c0x00ffffff-no-rj"),
+                      image_read("https://pbs.twimg.com/profile_images/1348412879100325889/-PIqfVGa_400x400.jpg")))
+
+df<-left_join(df,tt)
+
+df$mes<-gsub("(\\d{4})-(\\d{2})-(\\d{2})","\\2",df$`Fecha de Presentación`)
+df$dia<-gsub("(\\d{4})-(\\d{2})-(\\d{2})","\\3",df$`Fecha de Presentación`)
+
+mm<-c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE",
+      "NOVIEMBRE","DICIEMBRE")
+meses<-data.frame(mes=c(paste0("0",1:9),10:12),mes_v=ordered(mm,levels=mm))
+df<-left_join(df, meses)
+```
 
 ### PROYECTOS DE LEY.
 
 #### Proyectos de ley presentados por meses.
-
-``` r
+```{r, cache=TRUE}
 # Números de proyectos de ley por meses.
 df %>% distinct(`Proyecto de Ley`,mes_v) %>% group_by(mes_v) %>% count() %>% 
   ggplot(aes(x=mes_v,y=n, fill=mes_v))+
@@ -35,11 +149,8 @@ df %>% distinct(`Proyecto de Ley`,mes_v) %>% group_by(mes_v) %>% count() %>%
         plot.title = element_text(face = "bold"))
 ```
 
-![](README-unnamed-chunk-3-1.png)<!-- -->
-
 #### Bancadas involucradas en la presentación de proyectos de ley.
-
-``` r
+```{r, fig.width=10, fig.height=6, cache=TRUE}
 df %>% distinct(`Proyecto de Ley`,Partido, image) %>% group_by(Partido,image) %>% 
   count() %>% filter(!is.na(Partido)) %>% 
   ggplot(aes(x=reorder(Partido,n),y=n, fill=Partido, image=image))+
@@ -56,11 +167,8 @@ df %>% distinct(`Proyecto de Ley`,Partido, image) %>% group_by(Partido,image) %>
         plot.title = element_text(face = "bold"))
 ```
 
-![](README-unnamed-chunk-4-1.png)<!-- -->
-
 #### Participación relativa de bancadas en la presentación de proyectos de ley.
-
-``` r
+```{r, fig.width=10, fig.height=6, cache=TRUE}
 df %>% distinct(`Proyecto de Ley`,Partido,image) %>% group_by(Partido,image) %>% 
   count() %>% filter(!is.na(Partido)) %>% 
   left_join(congresistas %>% group_by(Partido) %>% summarise(tot=length(Partido))) %>% 
@@ -77,14 +185,10 @@ df %>% distinct(`Proyecto de Ley`,Partido,image) %>% group_by(Partido,image) %>%
   theme(legend.position = "none",
         plot.caption = element_text(face = "bold", size = 7,hjust = 0),
         plot.title = element_text(face = "bold"))
-# Joining, by = "Partido"
 ```
 
-![](README-unnamed-chunk-5-1.png)<!-- -->
-
 #### Congresistas con más proyectos de ley presentados.
-
-``` r
+```{r, fig.width=10, fig.height=6, cache=TRUE}
 df %>% group_by(Partido,Autores,image) %>% count() %>% arrange(-n) %>% head(n=10) %>% 
   ggplot(aes(x=reorder(Autores,n),y=n, fill=Autores, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
@@ -100,11 +204,8 @@ df %>% group_by(Partido,Autores,image) %>% count() %>% arrange(-n) %>% head(n=10
         plot.title = element_text(face = "bold"))
 ```
 
-![](README-unnamed-chunk-6-1.png)<!-- -->
-
 #### Proyectos de ley presentados por regiones.
-
-``` r
+```{r, fig.width=7, fig.height=10, cache=TRUE, message=FALSE, warning=FALSE}
 Peru<-getData('GADM', country='Peru', level=1) %>% st_as_sf() # Mapa de Perú. 
 
 Peru$NAME_1<-limpiecito(Peru$NAME_1)
@@ -120,13 +221,6 @@ Peru_d<-st_centroid(Peru)
 Peru_d<-cbind(Peru, st_coordinates(st_centroid(Peru$geometry)))
 
 Sur_America <- st_read("C:/OTROS/shapefile/sudamerica/Sudamérica.shp") # Sudamérica 
-# Reading layer `SudamÃ©rica' from data source 
-#   `C:\OTROS\shapefile\sudamerica\SudamÃ©rica.shp' using driver `ESRI Shapefile'
-# Simple feature collection with 15 features and 1 field
-# Geometry type: MULTIPOLYGON
-# Dimension:     XY
-# Bounding box:  xmin: -109.4461 ymin: -58.49861 xmax: -26.24139 ymax: 12.59028
-# Geodetic CRS:  WGS 84
 SurAmerica_utm <- st_transform(Sur_America,crs = st_crs("+proj=longlat +datum=WGS84 +no_defs"))
 
 ggplot()+
@@ -163,11 +257,8 @@ ggplot()+
         plot.title = element_text(face = "bold"))
 ```
 
-![](README-unnamed-chunk-7-1.png)<!-- -->
-
-#### Participación relativa en la presentación de proyectos de ley por regiones.
-
-``` r
+#### Participación relativa en la presentación de proyectos de ley por regiones. 
+```{r, fig.width=7, fig.height=10, cache=TRUE, message=FALSE, warning=FALSE}
 Peru<-getData('GADM', country='Peru', level=1) %>% st_as_sf() # Mapa de Perú. 
 
 Peru$NAME_1<-limpiecito(Peru$NAME_1)
@@ -184,13 +275,6 @@ Peru_d<-st_centroid(Peru)
 Peru_d<-cbind(Peru, st_coordinates(st_centroid(Peru$geometry)))
 
 Sur_America <- st_read("C:/OTROS/shapefile/sudamerica/Sudamérica.shp") # Sudamérica 
-# Reading layer `SudamÃ©rica' from data source 
-#   `C:\OTROS\shapefile\sudamerica\SudamÃ©rica.shp' using driver `ESRI Shapefile'
-# Simple feature collection with 15 features and 1 field
-# Geometry type: MULTIPOLYGON
-# Dimension:     XY
-# Bounding box:  xmin: -109.4461 ymin: -58.49861 xmax: -26.24139 ymax: 12.59028
-# Geodetic CRS:  WGS 84
 SurAmerica_utm <- st_transform(Sur_America,crs = st_crs("+proj=longlat +datum=WGS84 +no_defs"))
 
 ggplot()+
@@ -227,11 +311,8 @@ ggplot()+
         plot.title = element_text(face = "bold"))
 ```
 
-![](README-unnamed-chunk-8-1.png)<!-- -->
-
 #### Proyectos de ley publicados o en autografa por bancada.
-
-``` r
+```{r,fig.width=10, fig.height=6, cache=TRUE}
 df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,image) %>% count(Estado) %>% 
   filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% filter(!is.na(Partido)) %>% mutate(sum=sum(n)) %>% 
   dplyr::select(-Estado,-n) %>% distinct() %>% 
@@ -249,11 +330,8 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
         plot.title = element_text(face = "bold"))
 ```
 
-![](README-unnamed-chunk-9-1.png)<!-- -->
-
 #### Participación en proyectos de ley que han sido publicados o en autografa.
-
-``` r
+```{r,fig.width=11, fig.height=6, cache=TRUE}
 df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,image) %>% count(Estado) %>% 
   filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% filter(!is.na(Partido)) %>% mutate(sum=sum(n)) %>% 
   dplyr::select(-Estado,-n) %>% distinct() %>% 
@@ -271,14 +349,10 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
   theme(legend.position = "none",
         plot.caption = element_text(face = "bold", size = 7, hjust = 0),
         plot.title = element_text(face = "bold"))
-# Joining, by = "Partido"
 ```
 
-![](README-unnamed-chunk-10-1.png)<!-- -->
-
 # Participación de congresistas en leyes publicadas en el peruano o en autografa.
-
-``` r
+```{r,fig.width=10, fig.height=6, cache=TRUE}
 df %>% distinct(`Proyecto de Ley`,Estado, Autores,image) %>% group_by(Autores,image) %>% count(Estado) %>% 
   filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% filter(!is.na(Autores)) %>% mutate(sum=sum(n)) %>% 
   dplyr::select(-Estado,-n) %>% distinct() %>% arrange(-sum) %>% head(n=8) %>% 
@@ -296,17 +370,13 @@ df %>% distinct(`Proyecto de Ley`,Estado, Autores,image) %>% group_by(Autores,im
         plot.title = element_text(face = "bold"))
 ```
 
-![](README-unnamed-chunk-11-1.png)<!-- -->
+
+
 
 ## Actualizaciones.
 
-La primera versión se publicó el día **11/12/2021**, pero en los
-siguientes días se estará actualizando la información hasta el 15 de
-diciembre del 2021, día que entrará en receso el congreso.
+La primera versión se publicó el día **11/12/2021**, pero en los siguientes días se estará actualizando la información hasta el 15 de diciembre del 2021, día que entrará en receso el congreso. 
 
-Para la extracción, limpieza y gráficos del repositorio se usa el
-software R en su totalidad. Si tiene alguna sugerencia o comentario
-puede enviarnos un correo a: **<pe.cesar.huamani.n@uni.pe>** o
-**<cesar.huamani@datametria.com>**
+Para la extracción, limpieza y gráficos del repositorio se usa el software R en su totalidad. Si tiene alguna sugerencia o comentario puede enviarnos un correo a: **pe.cesar.huamani.n@uni.pe** o **cesar.huamani@datametria.com**
 
 Muchas gracias.

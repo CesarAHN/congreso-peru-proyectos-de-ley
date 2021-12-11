@@ -1,0 +1,15 @@
+base
+rvest
+dplyr
+openxlsx
+ggplot2
+datametria
+tidyr
+stringr
+ggrepel
+ggtextures
+magick
+sp
+raster
+ggspatial
+sf
