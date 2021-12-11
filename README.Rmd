@@ -134,7 +134,7 @@ df<-left_join(df, meses)
 ### PROYECTOS DE LEY.
 
 #### Proyectos de ley presentados por meses.
-```{r, cache=TRUE}
+```{r, echo=FALSE}
 # Números de proyectos de ley por meses.
 df %>% distinct(`Proyecto de Ley`,mes_v) %>% group_by(mes_v) %>% count() %>% 
   ggplot(aes(x=mes_v,y=n, fill=mes_v))+
@@ -150,7 +150,7 @@ df %>% distinct(`Proyecto de Ley`,mes_v) %>% group_by(mes_v) %>% count() %>%
 ```
 
 #### Bancadas involucradas en la presentación de proyectos de ley.
-```{r, fig.width=10, fig.height=6, cache=TRUE}
+```{r, fig.width=10, fig.height=6, echo=FALSE}
 df %>% distinct(`Proyecto de Ley`,Partido, image) %>% group_by(Partido,image) %>% 
   count() %>% filter(!is.na(Partido)) %>% 
   ggplot(aes(x=reorder(Partido,n),y=n, fill=Partido, image=image))+
@@ -168,7 +168,7 @@ df %>% distinct(`Proyecto de Ley`,Partido, image) %>% group_by(Partido,image) %>
 ```
 
 #### Participación relativa de bancadas en la presentación de proyectos de ley.
-```{r, fig.width=10, fig.height=6, cache=TRUE}
+```{r, fig.width=10, fig.height=6, echo=FALSE}
 df %>% distinct(`Proyecto de Ley`,Partido,image) %>% group_by(Partido,image) %>% 
   count() %>% filter(!is.na(Partido)) %>% 
   left_join(congresistas %>% group_by(Partido) %>% summarise(tot=length(Partido))) %>% 
@@ -188,7 +188,7 @@ df %>% distinct(`Proyecto de Ley`,Partido,image) %>% group_by(Partido,image) %>%
 ```
 
 #### Congresistas con más proyectos de ley presentados.
-```{r, fig.width=10, fig.height=6, cache=TRUE}
+```{r, fig.width=10, fig.height=6, echo=FALSE}
 df %>% group_by(Partido,Autores,image) %>% count() %>% arrange(-n) %>% head(n=10) %>% 
   ggplot(aes(x=reorder(Autores,n),y=n, fill=Autores, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
@@ -205,7 +205,7 @@ df %>% group_by(Partido,Autores,image) %>% count() %>% arrange(-n) %>% head(n=10
 ```
 
 #### Proyectos de ley presentados por regiones.
-```{r, fig.width=7, fig.height=10, cache=TRUE, message=FALSE, warning=FALSE}
+```{r, fig.width=7, fig.height=10, message=FALSE, warning=FALSE, echo=FALSE}
 Peru<-getData('GADM', country='Peru', level=1) %>% st_as_sf() # Mapa de Perú. 
 
 Peru$NAME_1<-limpiecito(Peru$NAME_1)
@@ -220,7 +220,7 @@ Peru$etiq<-paste0(Peru$NAME_1,"\n",Peru$n)
 Peru_d<-st_centroid(Peru)                                
 Peru_d<-cbind(Peru, st_coordinates(st_centroid(Peru$geometry)))
 
-Sur_America <- st_read("C:/OTROS/shapefile/sudamerica/Sudamérica.shp") # Sudamérica 
+Sur_America <- st_read("C:/OTROS/shapefile/sudamerica/Sudamérica.shp")
 SurAmerica_utm <- st_transform(Sur_America,crs = st_crs("+proj=longlat +datum=WGS84 +no_defs"))
 
 ggplot()+
@@ -258,7 +258,7 @@ ggplot()+
 ```
 
 #### Participación relativa en la presentación de proyectos de ley por regiones. 
-```{r, fig.width=7, fig.height=10, cache=TRUE, message=FALSE, warning=FALSE}
+```{r, fig.width=7, fig.height=10, message=FALSE, warning=FALSE, echo=FALSE}
 Peru<-getData('GADM', country='Peru', level=1) %>% st_as_sf() # Mapa de Perú. 
 
 Peru$NAME_1<-limpiecito(Peru$NAME_1)
@@ -274,7 +274,7 @@ Peru$etiq<-paste0(Peru$NAME_1,"\n",Peru$p)
 Peru_d<-st_centroid(Peru)                                
 Peru_d<-cbind(Peru, st_coordinates(st_centroid(Peru$geometry)))
 
-Sur_America <- st_read("C:/OTROS/shapefile/sudamerica/Sudamérica.shp") # Sudamérica 
+Sur_America <- st_read("C:/OTROS/shapefile/sudamerica/Sudamérica.shp")
 SurAmerica_utm <- st_transform(Sur_America,crs = st_crs("+proj=longlat +datum=WGS84 +no_defs"))
 
 ggplot()+
@@ -312,7 +312,7 @@ ggplot()+
 ```
 
 #### Proyectos de ley publicados o en autografa por bancada.
-```{r,fig.width=10, fig.height=6, cache=TRUE}
+```{r,fig.width=10, fig.height=6, echo=FALSE}
 df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,image) %>% count(Estado) %>% 
   filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% filter(!is.na(Partido)) %>% mutate(sum=sum(n)) %>% 
   dplyr::select(-Estado,-n) %>% distinct() %>% 
@@ -331,7 +331,7 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
 ```
 
 #### Participación en proyectos de ley que han sido publicados o en autografa.
-```{r,fig.width=11, fig.height=6, cache=TRUE}
+```{r,fig.width=11, fig.height=6, echo=FALSE}
 df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,image) %>% count(Estado) %>% 
   filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% filter(!is.na(Partido)) %>% mutate(sum=sum(n)) %>% 
   dplyr::select(-Estado,-n) %>% distinct() %>% 
@@ -352,7 +352,7 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
 ```
 
 # Participación de congresistas en leyes publicadas en el peruano o en autografa.
-```{r,fig.width=10, fig.height=6, cache=TRUE}
+```{r,fig.width=10, fig.height=6, echo=FALSE}
 df %>% distinct(`Proyecto de Ley`,Estado, Autores,image) %>% group_by(Autores,image) %>% count(Estado) %>% 
   filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% filter(!is.na(Autores)) %>% mutate(sum=sum(n)) %>% 
   dplyr::select(-Estado,-n) %>% distinct() %>% arrange(-sum) %>% head(n=8) %>% 
