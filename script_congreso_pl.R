@@ -133,7 +133,7 @@ df %>% distinct(`Proyecto de Ley`,Partido, image) %>% group_by(Partido,image) %>
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
   coord_flip()+
   scale_fill_brewer(palette = "Spectral")+
-  labs(x="Partidos",y="Número de proyectos",title = "PRESENTACIÓN DE PROYECTOS DE LEY\nBANCADAS INVOLUCRADAS",
+  labs(x="Bancadas",y="Número de proyectos",title = "PRESENTACIÓN DE PROYECTOS DE LEY\nBANCADAS INVOLUCRADAS",
        fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.")+
   geom_label(aes(x=reorder(Partido,n),y=n+10,label=n),show.legend=F, bg="white", size=5)+
   theme_bw()+
@@ -151,7 +151,7 @@ df %>% distinct(`Proyecto de Ley`,Partido,image) %>% group_by(Partido,image) %>%
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
   scale_fill_brewer(palette = "Spectral")+
-  labs(x="Partidos",y="Número de proyectos",title = "PARTICIPACIÓN RELATIVA DE BANCADAS EN LA PRESENTACIÓN\nDE PROYECTOS***.",
+  labs(x="Bancadas",y="Número de proyectos",title = "PARTICIPACIÓN RELATIVA DE BANCADAS EN LA PRESENTACIÓN\nDE PROYECTOS***.",
        fill="", caption = "Solo proyectos presentados por el congreso.\n***Se entiende como el coeficiente entre proyectos presentados y el número de congresistas por bancada.\nFUENTE: CONGRESO DE LA REPÚBLICA.")+
   geom_label(aes(x=reorder(Partido,p),y=p+2,label=p),show.legend=F, bg="white", size=5)+
   coord_flip()+
@@ -290,7 +290,7 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
   scale_fill_brewer(palette = "Spectral")+
-  labs(x="Congresistas",y="Número de proyectos",title = "PROYECTOS DE LEY PUBLICADOS EN EL PERUANO O EN AUTÓGRAFA\nPOR BANCADA.",
+  labs(x="Bancadas",y="Número de proyectos publicados o en autógrafa",title = "PROYECTOS DE LEY PUBLICADOS EN EL PERUANO O EN AUTÓGRAFA\nPOR BANCADA.",
        fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.")+
   geom_label(aes(x=reorder(Partido,sum),y=sum+.5,label=sum),show.legend=F, bg="white", size=5)+
   coord_flip()+
@@ -310,9 +310,9 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
   scale_fill_brewer(palette = "Spectral")+
-  labs(x="Congresistas",y="Número de proyectos",title = "PARTICIPACIÓN EN PROYECTOS DE LEY PUBLICADOS EN EL PERUANO O EN AUTÓGRAFA\nPOR BANCADA.",
+  labs(x="Bancadas",y="Número de proyectos publicados o en autógrafa",title = "PARTICIPACIÓN EN PROYECTOS DE LEY PUBLICADOS EN EL PERUANO\nO EN AUTÓGRAFA - POR BANCADA.",
        fill="", caption = "Solo proyectos presentados por el congreso.\n***Se entiende como el coeficiente entre proyectos presentados y el número de congresistas por bancada.\nFUENTE: CONGRESO DE LA REPÚBLICA.")+
-  geom_label(aes(x=reorder(Partido,p),y=p+.1,label=p),show.legend=F, bg="white", size=5)+
+  geom_label(aes(x=reorder(Partido,p),y=p+.05,label=p),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
   theme(legend.position = "none",
@@ -328,7 +328,7 @@ df %>% distinct(`Proyecto de Ley`,Estado, Autores,image) %>% group_by(Autores,im
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
   scale_fill_brewer(palette = "Spectral")+
-  labs(x="Congresistas",y="Número de proyectos",title = "TOP 8 - CONGRESISTAS.\nCON MÁS PROYECTOS DE LEY PUBLICADOS EN EL PERUANO\nO EN AUTÓGRAFA.",
+  labs(x="Congresistas",y="Número de proyectos publicados o en autógrafa",title = "TOP 8 - CONGRESISTAS.\nCON MÁS PROYECTOS DE LEY PUBLICADOS EN EL PERUANO\nO EN AUTÓGRAFA.",
        fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.")+
   geom_label(aes(x=reorder(Autores,sum),y=sum+.5,label=sum),show.legend=F, bg="white", size=5)+
   coord_flip()+
