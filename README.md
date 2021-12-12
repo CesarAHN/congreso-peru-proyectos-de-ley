@@ -14,6 +14,10 @@ bancadas, regiones y por congresistas.
 Esta información se extrajo desde el portal Voto informado. —&gt;
 <https://www.congreso.gob.pe/>
 
+Los códigos lo puede encontrar en el repositorio con el nombre de
+`script_congreso_pl.R` y el data frame que compila toda la información
+es `df`.
+
 ## ¿CÓMO ESTÁ TRABAJANDO EL CONGRESO?
 
 ### PROYECTOS DE LEY.
