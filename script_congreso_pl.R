@@ -52,6 +52,7 @@ congresistas$Partido<-ifelse(grepl("AVANZA PAIS",congresistas$Partido),
                              "AVANZA PAIS", congresistas$Partido)
 
 #-------------------------------------------------------------------
+# Información extraída desde https://wb2server.congreso.gob.pe/spley-portal/#/expediente/search
 proy<-read.xlsx("ReporteProyectosLey.xlsx")
 
 names(proy)<-proy[1,]
