@@ -74,15 +74,17 @@ es `df`.
 
 ![](README-unnamed-chunk-10-1.png)<!-- -->
 
-# Participación de congresistas en leyes publicadas en el peruano o en autografa.
+#### Participación de congresistas en leyes publicadas en el peruano o en autografa.
 
 ![](README-unnamed-chunk-11-1.png)<!-- -->
 
 ## Actualizaciones.
 
 La primera versión se publicó el día **11/12/2021**, pero en los
-siguientes días se estará actualizando la información hasta el 15 de
-diciembre del 2021, día que entrará en receso el congreso.
+siguientes días se ha venido actualizando la información, en un
+principio se pensó hasta el 15 de diciembre, pero el congreso amplió su
+legislatura y estará sesionando hasta el 17 de enero de 2022, día que
+entrará en receso el congreso.
 
 Para la extracción, limpieza y gráficos del repositorio se usa el
 software R en su totalidad. Si tiene alguna sugerencia o comentario

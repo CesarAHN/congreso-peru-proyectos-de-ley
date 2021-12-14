@@ -110,6 +110,8 @@ mm<-c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEM
 meses<-data.frame(mes=c(paste0("0",1:9),10:12),mes_v=ordered(mm,levels=mm))
 df<-left_join(df, meses)
 
+fecha<-Sys.Date()
+
 #-------------------------------------------------------------------
 # Números de proyectos de ley por meses.
 df %>% distinct(`Proyecto de Ley`,mes_v) %>% group_by(mes_v) %>% count() %>% 
@@ -117,7 +119,8 @@ df %>% distinct(`Proyecto de Ley`,mes_v) %>% group_by(mes_v) %>% count() %>%
   geom_col()+
   scale_fill_brewer(palette = "Spectral")+
   labs(x="Meses",y="Número de proyectos",title = "PROYECTOS DE LEY PRESENTADOS POR MES.",
-       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.")+
+       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(label=n),show.legend=F, bg="white", size=5)+
   theme_bw()+
   theme(legend.position = "none",
@@ -134,7 +137,8 @@ df %>% distinct(`Proyecto de Ley`,Partido, image) %>% group_by(Partido,image) %>
   coord_flip()+
   scale_fill_brewer(palette = "Spectral")+
   labs(x="Bancadas",y="Número de proyectos",title = "PRESENTACIÓN DE PROYECTOS DE LEY\nBANCADAS INVOLUCRADAS",
-       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.")+
+       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(x=reorder(Partido,n),y=n+10,label=n),show.legend=F, bg="white", size=5)+
   theme_bw()+
   theme(legend.position = "none",
@@ -152,7 +156,8 @@ df %>% distinct(`Proyecto de Ley`,Partido,image) %>% group_by(Partido,image) %>%
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
   scale_fill_brewer(palette = "Spectral")+
   labs(x="Bancadas",y="Número de proyectos",title = "PARTICIPACIÓN RELATIVA DE BANCADAS EN LA PRESENTACIÓN\nDE PROYECTOS***.",
-       fill="", caption = "Solo proyectos presentados por el congreso.\n***Se entiende como el coeficiente entre proyectos presentados y el número de congresistas por bancada.\nFUENTE: CONGRESO DE LA REPÚBLICA.")+
+       fill="", caption = "Solo proyectos presentados por el congreso.\n***Se entiende como el coeficiente entre proyectos presentados y el número de congresistas por bancada.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(x=reorder(Partido,p),y=p+2,label=p),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
@@ -168,7 +173,8 @@ df %>% group_by(Partido,Autores,image) %>% count() %>% arrange(-n) %>% head(n=10
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
   scale_fill_brewer(palette = "Spectral")+
   labs(x="Congresistas",y="Número de proyectos",title = "TOP - 10 CONGRESISTAS\nINVOLUCRADOS EN LA PRESENTACIÓN DE PROYECTOS DE LEY.",
-       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.")+
+       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(x=reorder(Autores,n),y=n+10,label=n),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
@@ -221,7 +227,8 @@ ggplot()+
   guides(fill = guide_legend(barheight = .01, barwidth = .7, raster = FALSE,
                              title = "Número de\nproyectos"))+
   labs(caption = "No se considera los proyectos de los congresistas representantes del extranjero.\nFUENTE:CONGRESO DE LA REPÚBLICA",
-       title = "NÚMERO DE PROYECTOS DE LEY EN LOS QUE PARTICIPARON\nLOS CONGRESISTAS POR REGIÓN")+
+       title = "NÚMERO DE PROYECTOS DE LEY EN LOS QUE PARTICIPARON\nLOS CONGRESISTAS POR REGIÓN",
+       subtitle=paste0("Actualizado al: ",fecha))+
   theme(legend.position = c(0.15,0.25),
         legend.key.size = unit(0.5, 'cm'),
         legend.text = element_text(face = "bold"),
@@ -274,7 +281,8 @@ ggplot()+
   guides(fill = guide_legend(barheight = .01, barwidth = .7, raster = FALSE,
                              title = "Cociente:"))+
   labs(caption = "No se considera los proyectos de los congresistas representantes del extranjero.\n***Se entiende como el coeficiente entre proyectos presentados y el número de congresistas por región.\nFUENTE:CONGRESO DE LA REPÚBLICA.",
-       title = "PARTICIPACIÓN RELATIVA EN PROYECTOS DE LEY POR REGIÓN***")+
+       title = "PARTICIPACIÓN RELATIVA EN PROYECTOS DE LEY POR REGIÓN***",
+       subtitle=paste0("Actualizado al: ",fecha))+
   theme(legend.position = c(0.15,0.25),
         legend.key.size = unit(0.5, 'cm'),
         legend.text = element_text(face = "bold"),
@@ -291,7 +299,8 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
   scale_fill_brewer(palette = "Spectral")+
   labs(x="Bancadas",y="Número de proyectos publicados o en autógrafa",title = "PROYECTOS DE LEY PUBLICADOS EN EL PERUANO O EN AUTÓGRAFA\nPOR BANCADA.",
-       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.")+
+       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(x=reorder(Partido,sum),y=sum+.5,label=sum),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
@@ -311,7 +320,8 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
   scale_fill_brewer(palette = "Spectral")+
   labs(x="Bancadas",y="Número de proyectos publicados o en autógrafa",title = "PARTICIPACIÓN EN PROYECTOS DE LEY PUBLICADOS EN EL PERUANO\nO EN AUTÓGRAFA - POR BANCADA.",
-       fill="", caption = "Solo proyectos presentados por el congreso.\n***Se entiende como el coeficiente entre proyectos presentados y el número de congresistas por bancada.\nFUENTE: CONGRESO DE LA REPÚBLICA.")+
+       fill="", caption = "Solo proyectos presentados por el congreso.\n***Se entiende como el coeficiente entre proyectos presentados y el número de congresistas por bancada.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(x=reorder(Partido,p),y=p+.05,label=p),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
@@ -329,7 +339,8 @@ df %>% distinct(`Proyecto de Ley`,Estado, Autores,image) %>% group_by(Autores,im
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
   scale_fill_brewer(palette = "Spectral")+
   labs(x="Congresistas",y="Número de proyectos publicados o en autógrafa",title = "TOP 8 - CONGRESISTAS.\nCON MÁS PROYECTOS DE LEY PUBLICADOS EN EL PERUANO\nO EN AUTÓGRAFA.",
-       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.")+
+       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(x=reorder(Autores,sum),y=sum+.5,label=sum),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
