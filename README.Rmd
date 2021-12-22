@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 
 # ¿CÓMO ESTÁN TRABAJANDO LOS CONGRESISTAS DEL PERÚ - PROYECTOS DE LEY?
 
-Actualizado a `r Sys.Date()`.
+Actualizado a **`r Sys.Date()`**.
 
 Se crea este repositorio con el fin de poder conocer cómo están trabajando los congresistas de la república del Perú, específicamente en la presentación de proyectos de ley y en la concreción final de convertirse en ley.
 
@@ -457,7 +457,7 @@ df %>%
 
 ### Palabras más usadas en la presentación de proyectos de ley del top 4 congresistas con más proyectos de ley presentados.
 
-```{r, fig.width=12, fig.height=10, echo=F, warning=FALSE, message=FALSE}
+```{r, fig.width=14, fig.height=10, echo=F, warning=FALSE, message=FALSE}
 n1<-df %>% group_by(partido,autores) %>% count(autores, sort = T) %>% ungroup() %>% head(4) %>% 
   dplyr::select(autores)
 
@@ -490,7 +490,7 @@ plot_grid(pp_1,pp_2,pp_3,pp_4, ncol = 2)
 
 ### Palabras que más se relacionan en la presentación de proyectos de ley del top 4 congresistas con más proyectos de ley presentados.
 
-```{r, fig.width=12, fig.height=9, echo=F, warning=FALSE, message=FALSE}
+```{r, fig.width=14, fig.height=9, echo=F, warning=FALSE, message=FALSE}
 for (i in 1:dim(n1)[1]) {
   assign(paste0("pp_",i),
          df %>% filter(autores==n1$autores[i]) %>%
