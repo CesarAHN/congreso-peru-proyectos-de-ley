@@ -3,7 +3,7 @@
 
 # ¿CÓMO ESTÁN TRABAJANDO LOS CONGRESISTAS DEL PERÚ - PROYECTOS DE LEY?
 
-Actualizado a 2021-12-18.
+Actualizado a 2021-12-22.
 
 Se crea este repositorio con el fin de poder conocer cómo están
 trabajando los congresistas de la república del Perú, específicamente en
@@ -79,6 +79,24 @@ es `df`.
 #### Participación de congresistas en leyes publicadas en el peruano o en autografa.
 
 ![](README-unnamed-chunk-11-1.png)<!-- -->
+
+### Palabras más usadas en los títulos de los proyectos de ley.
+
+    # Joining, by = "word"
+
+![](README-unnamed-chunk-13-1.png)<!-- -->
+
+### Palabras que se relacionan más en los proyectos de ley.
+
+![](README-unnamed-chunk-14-1.png)<!-- -->
+
+### Palabras más usadas en la presentación de proyectos de ley del top 4 congresistas con más proyectos de ley presentados.
+
+![](README-unnamed-chunk-15-1.png)<!-- -->
+
+### Palabras que más se relacionan en la presentación de proyectos de ley del top 4 congresistas con más proyectos de ley presentados.
+
+![](README-unnamed-chunk-16-1.png)<!-- -->
 
 ## Actualizaciones.
 

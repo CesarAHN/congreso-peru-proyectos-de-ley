@@ -59,7 +59,7 @@ names(proy)<-proy[1,]
 
 proy<-proy[-1,]
 
-proy[,1:6]<-apply(proy[,1:6], 2, limpiecito)
+proy[,c(1:2,4:6)]<-apply(proy[,c(1:2,4:6)], 2, limpiecito)
 
 proy<-proy %>% mutate(Autores = str_split(Autores, ";")) %>%
   unnest()
@@ -347,3 +347,125 @@ df %>% distinct(`Proyecto de Ley`,Estado, Autores,image) %>% group_by(Autores,im
   theme(legend.position = "none",
         plot.caption = element_text(face = "bold", size = 7),
         plot.title = element_text(face = "bold"))
+
+###################################################################################
+df$`Fecha de Presentación`<-as.Date(df$`Fecha de Presentación`)
+names(df)<-limpiecito(gsub(" ","_",names(df)), capital = F)
+df$titulo<-tolower(df$titulo)
+
+# Definiendo palabras no relevantes.
+library(stopwords)
+library(tidytext)
+library(viridis)
+library(widyr)
+library(ggraph)
+library(igraph)
+
+no_word <- as.data.frame(c(stopwords("es"),"n"))
+names(no_word) <- "word"
+
+df  %>% 
+  distinct(titulo,proyecto_de_ley) %>%
+  unnest_tokens(word, titulo, drop = FALSE) %>% 
+  distinct(proyecto_de_ley,word) %>%
+  anti_join(no_word) %>%
+  filter(!grepl("\\d",word)) %>% 
+  count(word, sort = T) %>% head(25) %>%
+  ggplot(aes(x=reorder(word, n),y=n, fill=reorder(word, n))) +
+  geom_col()+
+  geom_label(aes(x=reorder(word, n),y=n, label=n), size=4, fill="white")+
+  scale_fill_viridis(discrete = T)+
+  coord_flip()+
+  scale_y_continuous(breaks = seq(0,900,by=50)) +
+  labs(title = "PALABRAS MÁS USADAS EN LOS PROYECTOS DE LEY",
+       subtitle = paste0("Actualizado al: ",fecha),
+       y="Número de veces que se repite",x="Palabras")+
+  theme_bw()+
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold"))
+
+set.seed(2021)
+df %>%
+  distinct(titulo, proyecto_de_ley) %>%
+  unnest_tokens(word, titulo, drop = FALSE) %>% 
+  distinct(proyecto_de_ley,word) %>%
+  anti_join(no_word) %>% 
+  filter(!grepl("\\d",word)) %>% 
+  pairwise_count(word, proyecto_de_ley, sort = TRUE, upper = FALSE) %>% 
+  filter(n >= 20) %>%
+  graph_from_data_frame() %>% 
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n, edge_width = n), edge_colour = "mediumseagreen") +
+  geom_node_point(size = 5) +
+  geom_node_text(aes(label = name), repel = TRUE, 
+                 point.padding = unit(0.2, "lines")) +
+  labs(title = "PALABRAS QUE SE RELACIONA MÁS EN LOS PROYECTOS DE LEY")+
+  theme_bw()+
+  theme(legend.position = "none",
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        plot.title = element_text(face="bold"))
+
+# Proyecto de ley de los congresistas con más presentaciones de proyectos de ley. 
+# Frecuencia de palabras.
+n1<-df %>% group_by(partido,autores) %>% count(autores, sort = T) %>% ungroup() %>% head(4) %>% 
+  dplyr::select(autores)
+
+for (i in 1:dim(n1)[1]) {
+  assign(paste0("pp_",i),
+         df %>% filter(autores==n1$autores[i]) %>%
+           distinct(titulo,proyecto_de_ley) %>%
+           unnest_tokens(word, titulo, drop = FALSE) %>% 
+           distinct(proyecto_de_ley,word) %>%
+           anti_join(no_word) %>%
+           filter(!grepl("\\d",word)) %>% 
+           count(word, sort = T) %>% head(15) %>%
+           ggplot(aes(x=reorder(word, n),y=n, fill=reorder(word, n))) +
+           geom_col()+
+           geom_label(aes(x=reorder(word, n),y=n, label=n), size=3, fill="white")+
+           scale_fill_viridis(discrete = T)+
+           coord_flip()+
+           scale_y_continuous(breaks = seq(0,900,by=50)) +
+           labs(title = paste0("PALABRAS MÁS USADAS EN LOS PROYECTOS DE LEY.\n",
+                               "CONGRESISTA: ",n1$autores[i]),
+                subtitle = paste0("Actualizado al: ",fecha),
+                y="Número de veces que se repite",x="Palabras")+
+           theme_bw()+
+           theme(legend.position = "none",
+                 plot.title = element_text(face = "bold")))
+}
+
+plot_grid(pp_1,pp_2,pp_3,pp_4, ncol = 2)
+
+# Relación de palabras. 
+
+for (i in 1:dim(n1)[1]) {
+  assign(paste0("pp_",i),
+         df %>% filter(autores==n1$autores[i]) %>%
+           distinct(titulo,proyecto_de_ley) %>%
+           distinct(titulo, proyecto_de_ley) %>%
+           unnest_tokens(word, titulo, drop = FALSE) %>% 
+           distinct(proyecto_de_ley,word) %>%
+           anti_join(no_word) %>% 
+           filter(!grepl("\\d",word)) %>% 
+           pairwise_count(word, proyecto_de_ley, sort = TRUE, upper = FALSE) %>% 
+           filter(n >= 10) %>%
+           graph_from_data_frame() %>% 
+           ggraph(layout = "fr") +
+           geom_edge_link(aes(edge_alpha = n, edge_width = n), edge_colour = "mediumseagreen") +
+           geom_node_point(size = 4) +
+           geom_node_text(aes(label = name), repel = TRUE, size=3,
+                          point.padding = unit(0.2, "lines")) +
+           labs(title = paste0("PALABRAS QUE SE RELACIONA MÁS EN LOS PROYECTOS DE LEY.\n",
+                               "CONGRESISTA: ",n1$autores[i]),
+                subtitle = paste0("Actualizado al: ",fecha))+
+           theme_bw()+
+           theme(legend.position = "none",
+                 axis.title = element_blank(),
+                 axis.text = element_blank(),
+                 axis.ticks = element_blank(),
+                 plot.title = element_text(face="bold")))
+}
+
+plot_grid(pp_1,pp_2,pp_3,pp_4, ncol = 2)
