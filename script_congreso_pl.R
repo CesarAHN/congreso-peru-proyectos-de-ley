@@ -113,21 +113,6 @@ df<-left_join(df, meses)
 fecha<-Sys.Date()
 
 #-------------------------------------------------------------------
-# Números de proyectos de ley por meses.
-df %>% distinct(`Proyecto de Ley`,mes_v) %>% group_by(mes_v) %>% count() %>% 
-  ggplot(aes(x=mes_v,y=n, fill=mes_v))+
-  geom_col()+
-  scale_fill_brewer(palette = "Spectral")+
-  labs(x="Meses",y="Número de proyectos",title = "PROYECTOS DE LEY PRESENTADOS POR MES.",
-       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
-       subtitle=paste0("Actualizado al: ",fecha))+
-  geom_label(aes(label=n),show.legend=F, bg="white", size=5)+
-  theme_bw()+
-  theme(legend.position = "none",
-        plot.caption = element_text(face = "bold", size = 7),
-        plot.title = element_text(face = "bold"))
-
-#-----
 # Participación de partidos por proyectos.
 df %>% distinct(`Proyecto de Ley`,Partido, image) %>% group_by(Partido,image) %>% 
   count() %>% filter(!is.na(Partido)) %>% 
@@ -176,6 +161,24 @@ df %>% group_by(Partido,Autores,image) %>% count() %>% arrange(-n) %>% head(n=10
        fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(x=reorder(Autores,n),y=n+10,label=n),show.legend=F, bg="white", size=5)+
+  coord_flip()+
+  theme_bw()+
+  theme(legend.position = "none",
+        plot.caption = element_text(face = "bold", size = 7),
+        plot.title = element_text(face = "bold"))
+
+#---- 
+# Congresistas con más proyectos presentados - Autores principales.
+df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% left_join(df) %>% 
+  group_by(Partido,Autores,image) %>% count(sort = T) %>% head(n=10) %>% 
+  ggplot(aes(x=reorder(Autores,n),y=n, fill=Autores, image=image))+
+  geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
+  scale_fill_brewer(palette = "Spectral")+
+  labs(x="Congresistas",y="Número de proyectos",title = "TOP - 10 CONGRESISTAS COMO PRINCIPALES AUTORES\nEN LA PRESENTACIÓN DE PROYECTOS DE LEY.",
+       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Actualizado al: ",fecha))+
+  geom_label(aes(x=reorder(Autores,n),y=n+1,label=n),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
   theme(legend.position = "none",
@@ -342,6 +345,24 @@ df %>% distinct(`Proyecto de Ley`,Estado, Autores,image) %>% group_by(Autores,im
        fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(x=reorder(Autores,sum),y=sum+.5,label=sum),show.legend=F, bg="white", size=5)+
+  coord_flip()+
+  theme_bw()+
+  theme(legend.position = "none",
+        plot.caption = element_text(face = "bold", size = 7),
+        plot.title = element_text(face = "bold"))
+
+#------------------------
+# Congresistas principales en leyes publicadas en el peruano o en autógrafa.
+df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% left_join(df) %>% 
+  filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% group_by(Autores, image) %>% count(sort = T) %>% head(n=8) %>% 
+  ggplot(aes(x=reorder(Autores,n),y=n, fill=Autores, image=image))+
+  geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
+  scale_fill_brewer(palette = "Spectral")+
+  labs(x="Congresistas",y="Número de proyectos publicados o en autógrafa",title = "TOP 8 - CONGRESISTAS COMO AUTORES PRINCIPALES\nCON MÁS PROYECTOS DE LEY PUBLICADOS EN EL PERUANO\nO EN AUTÓGRAFA.",
+       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Actualizado al: ",fecha))+
+  geom_label(aes(x=reorder(Autores,n),y=n+.1,label=n),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
   theme(legend.position = "none",

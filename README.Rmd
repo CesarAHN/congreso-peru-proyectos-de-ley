@@ -141,23 +141,6 @@ fecha<-Sys.Date()
 
 ### PROYECTOS DE LEY.
 
-#### Proyectos de ley presentados por meses.
-```{r, echo=FALSE}
-# Números de proyectos de ley por meses.
-df %>% distinct(`Proyecto de Ley`,mes_v) %>% group_by(mes_v) %>% count() %>% 
-  ggplot(aes(x=mes_v,y=n, fill=mes_v))+
-  geom_col()+
-  scale_fill_brewer(palette = "Spectral")+
-  labs(x="Meses",y="Número de proyectos",title = "PROYECTOS DE LEY PRESENTADOS POR MES.",
-       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
-       subtitle=paste0("Actualizado al: ",fecha))+
-  geom_label(aes(label=n),show.legend=F, bg="white", size=5)+
-  theme_bw()+
-  theme(legend.position = "none",
-        plot.caption = element_text(face = "bold", size = 7),
-        plot.title = element_text(face = "bold"))
-```
-
 #### Bancadas involucradas en la presentación de proyectos de ley.
 ```{r, fig.width=10, fig.height=6, echo=FALSE}
 df %>% distinct(`Proyecto de Ley`,Partido, image) %>% group_by(Partido,image) %>% 
@@ -178,7 +161,7 @@ df %>% distinct(`Proyecto de Ley`,Partido, image) %>% group_by(Partido,image) %>
 ```
 
 #### Participación relativa de bancadas en la presentación de proyectos de ley.
-```{r, fig.width=10, fig.height=6, echo=FALSE}
+```{r, fig.width=10, fig.height=6, echo=FALSE, message=FALSE, warning=FALSE}
 df %>% distinct(`Proyecto de Ley`,Partido,image) %>% group_by(Partido,image) %>% 
   count() %>% filter(!is.na(Partido)) %>% 
   left_join(congresistas %>% group_by(Partido) %>% summarise(tot=length(Partido))) %>% 
@@ -215,6 +198,26 @@ df %>% group_by(Partido,Autores,image) %>% count() %>% arrange(-n) %>% head(n=10
         plot.caption = element_text(face = "bold", size = 7),
         plot.title = element_text(face = "bold"))
 ```
+
+#### Congresistas como autores principales en la presentación de proyectos de ley.
+```{r, fig.width=10, fig.height=6, echo=FALSE, message=FALSE, warning=FALSE}
+df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% left_join(df) %>% 
+  group_by(Partido,Autores,image) %>% count(sort = T) %>% head(n=10) %>% 
+  ggplot(aes(x=reorder(Autores,n),y=n, fill=Autores, image=image))+
+  geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
+  scale_fill_brewer(palette = "Spectral")+
+  labs(x="Congresistas",y="Número de proyectos",title = "TOP - 10 CONGRESISTAS COMO PRINCIPALES AUTORES\nEN LA PRESENTACIÓN DE PROYECTOS DE LEY.",
+       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Actualizado al: ",fecha))+
+  geom_label(aes(x=reorder(Autores,n),y=n+1,label=n),show.legend=F, bg="white", size=5)+
+  coord_flip()+
+  theme_bw()+
+  theme(legend.position = "none",
+        plot.caption = element_text(face = "bold", size = 7),
+        plot.title = element_text(face = "bold"))
+```
+
 
 #### Proyectos de ley presentados por regiones.
 ```{r, fig.width=7, fig.height=10, message=FALSE, warning=FALSE, echo=FALSE}
@@ -346,7 +349,7 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
 ```
 
 #### Participación en proyectos de ley que han sido publicados o en autografa.
-```{r,fig.width=11, fig.height=6, echo=FALSE}
+```{r,fig.width=11, fig.height=6, echo=FALSE, message=FALSE, warning=FALSE}
 df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,image) %>% count(Estado) %>% 
   filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% filter(!is.na(Partido)) %>% mutate(sum=sum(n)) %>% 
   dplyr::select(-Estado,-n) %>% distinct() %>% 
@@ -367,7 +370,7 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
         plot.title = element_text(face = "bold"))
 ```
 
-#### Participación de congresistas en leyes publicadas en el peruano o en autografa.
+#### Congresistas involucrados en leyes publicadas en el peruano o en autografa.
 ```{r,fig.width=10, fig.height=6, echo=F}
 df %>% distinct(`Proyecto de Ley`,Estado, Autores,image) %>% group_by(Autores,image) %>% count(Estado) %>% 
   filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% filter(!is.na(Autores)) %>% mutate(sum=sum(n)) %>% 
@@ -376,7 +379,7 @@ df %>% distinct(`Proyecto de Ley`,Estado, Autores,image) %>% group_by(Autores,im
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
   scale_fill_brewer(palette = "Spectral")+
-  labs(x="Bancadas",y="Número de proyectos publicados o en autógrafa",title = "TOP 8 - CONGRESISTAS.\nCON MÁS PROYECTOS DE LEY PUBLICADOS EN EL PERUANO\nO EN AUTÓGRAFA.",
+  labs(x="Bancadas",y="Número de proyectos publicados o en autógrafa",title = "TOP 8 - CONGRESISTAS INVOLUCRADOS\nCON MÁS PROYECTOS DE LEY PUBLICADOS EN EL PERUANO\nO EN AUTÓGRAFA.",
        fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(x=reorder(Autores,sum),y=sum+.5,label=sum),show.legend=F, bg="white", size=5)+
@@ -386,6 +389,27 @@ df %>% distinct(`Proyecto de Ley`,Estado, Autores,image) %>% group_by(Autores,im
         plot.caption = element_text(face = "bold", size = 7),
         plot.title = element_text(face = "bold"))
 ```
+
+#### Congresistas como autores principales en leyes publicadas en el peruano o en autógrafa.
+```{r,fig.width=10, fig.height=6, echo=F, message=FALSE, warning=FALSE}
+df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% left_join(df) %>% 
+  filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% group_by(Autores, image) %>% count(sort = T) %>% head(n=8) %>% 
+  ggplot(aes(x=reorder(Autores,n),y=n, fill=Autores, image=image))+
+  geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
+  scale_fill_brewer(palette = "Spectral")+
+  labs(x="Congresistas",y="Número de proyectos publicados o en autógrafa",title = "TOP 8 - CONGRESISTAS COMO AUTORES PRINCIPALES\nCON MÁS PROYECTOS DE LEY PUBLICADOS EN EL PERUANO\nO EN AUTÓGRAFA.",
+       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Actualizado al: ",fecha))+
+  geom_label(aes(x=reorder(Autores,n),y=n+.1,label=n),show.legend=F, bg="white", size=5)+
+  coord_flip()+
+  theme_bw()+
+  theme(legend.position = "none",
+        plot.caption = element_text(face = "bold", size = 7),
+        plot.title = element_text(face = "bold"))
+```
+
+
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 df$`Fecha de Presentación`<-as.Date(df$`Fecha de Presentación`)
@@ -407,7 +431,7 @@ names(no_word) <- "word"
 
 ### Palabras más usadas en los títulos de los proyectos de ley.
 
-```{r, fig.width=12, fig.height=7, echo=F}
+```{r, fig.width=12, fig.height=7, echo=F, message=FALSE, warning=FALSE}
 df  %>% 
   distinct(titulo,proyecto_de_ley) %>%
   unnest_tokens(word, titulo, drop = FALSE) %>% 

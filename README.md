@@ -3,7 +3,7 @@
 
 # ¿CÓMO ESTÁN TRABAJANDO LOS CONGRESISTAS DEL PERÚ - PROYECTOS DE LEY?
 
-Actualizado a **2022-01-01**.
+Actualizado a **2022-01-06**.
 
 Se crea este repositorio con el fin de poder conocer cómo están
 trabajando los congresistas de la república del Perú, específicamente en
@@ -24,21 +24,19 @@ es `df`.
 
 ### PROYECTOS DE LEY.
 
-#### Proyectos de ley presentados por meses.
+#### Bancadas involucradas en la presentación de proyectos de ley.
 
 ![](README-unnamed-chunk-3-1.png)<!-- -->
 
-#### Bancadas involucradas en la presentación de proyectos de ley.
+#### Participación relativa de bancadas en la presentación de proyectos de ley.
 
 ![](README-unnamed-chunk-4-1.png)<!-- -->
 
-#### Participación relativa de bancadas en la presentación de proyectos de ley.
-
-    # Joining, by = "Partido"
+#### Congresistas con más proyectos de ley presentados.
 
 ![](README-unnamed-chunk-5-1.png)<!-- -->
 
-#### Congresistas con más proyectos de ley presentados.
+#### Congresistas como autores principales en la presentación de proyectos de ley.
 
 ![](README-unnamed-chunk-6-1.png)<!-- -->
 
@@ -72,31 +70,31 @@ es `df`.
 
 #### Participación en proyectos de ley que han sido publicados o en autografa.
 
-    # Joining, by = "Partido"
-
 ![](README-unnamed-chunk-10-1.png)<!-- -->
 
-#### Participación de congresistas en leyes publicadas en el peruano o en autografa.
+#### Congresistas involucrados en leyes publicadas en el peruano o en autografa.
 
 ![](README-unnamed-chunk-11-1.png)<!-- -->
 
+#### Congresistas como autores principales en leyes publicadas en el peruano o en autógrafa.
+
+![](README-unnamed-chunk-12-1.png)<!-- -->
+
 ### Palabras más usadas en los títulos de los proyectos de ley.
-
-    # Joining, by = "word"
-
-![](README-unnamed-chunk-13-1.png)<!-- -->
-
-### Palabras que se relacionan más en los proyectos de ley.
 
 ![](README-unnamed-chunk-14-1.png)<!-- -->
 
-### Palabras más usadas en la presentación de proyectos de ley del top 4 congresistas con más proyectos de ley presentados.
+### Palabras que se relacionan más en los proyectos de ley.
 
 ![](README-unnamed-chunk-15-1.png)<!-- -->
 
-### Palabras que más se relacionan en la presentación de proyectos de ley del top 4 congresistas con más proyectos de ley presentados.
+### Palabras más usadas en la presentación de proyectos de ley del top 4 congresistas con más proyectos de ley presentados.
 
 ![](README-unnamed-chunk-16-1.png)<!-- -->
+
+### Palabras que más se relacionan en la presentación de proyectos de ley del top 4 congresistas con más proyectos de ley presentados.
+
+![](README-unnamed-chunk-17-1.png)<!-- -->
 
 ## Actualizaciones.
 
