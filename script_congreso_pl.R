@@ -87,18 +87,19 @@ df$Partido<-ifelse(grepl("HERRERA MAMANI FERNANDO",df$Autores),"PERU LIBRE", df$
 df$REGION<-ifelse(grepl("HERRERA MAMANI FERNANDO",df$Autores),"TACNA", df$REGION)
 
 tt<-tibble(Partido=c("ACCION POPULAR","FUERZA POPULAR","ALIANZA PARA EL PROGRESO","AVANZA PAIS",
-                     "JUNTOS POR EL PERU","NO AGRUPADO","PERU LIBRE","PODEMOS PERU",
-                     "RENOVACION POPULAR","SOMOS PERU"),
+                     "JUNTOS POR EL PERU","PERU DEMOCRATICO","PERU LIBRE","PODEMOS PERU",
+                     "RENOVACION POPULAR","SOMOS PERU","NO AGRUPADO"),
            image=list(image_read("https://upload.wikimedia.org/wikipedia/commons/e/ed/Acci%C3%B3n_Popular.png"),
                       image_read("https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Fuerza_popular.svg/1200px-Fuerza_popular.svg.png"),
                       image_read("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Alianza_para_el_Progreso_Peru.svg/160px-Alianza_para_el_Progreso_Peru.svg.png"),
                       image_read("https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Avanza_Pa%C3%ADs_2021.jpg/800px-Avanza_Pa%C3%ADs_2021.jpg"),
                       image_read("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnCsB796Mu2XiOi8is51rafuf56gN41QQhFU4FDPaxNnAb8pjmXMKcELKjSi8v8G91JPE&usqp=CAU"),
-                      image_read("https://r.datametria.com/wp-content/uploads/2021/12/agrupado.png"),
+                      image_read("https://r.datametria.com/wp-content/uploads/2022/01/PERU-DEMOCRATICO.png"),
                       image_read("https://seeklogo.com/images/P/peru-libre-lapiz-logo-6FB42CF126-seeklogo.com.png"),
                       image_read("https://upload.wikimedia.org/wikipedia/commons/0/07/Logo_Podemos_Per%C3%BA.png"),
                       image_read("https://yt3.ggpht.com/ytc/AKedOLRUqtO4GNJob_QEoz7C4_5ZkZb8Eiu2HRfPjjrz=s900-c-k-c0x00ffffff-no-rj"),
-                      image_read("https://pbs.twimg.com/profile_images/1348412879100325889/-PIqfVGa_400x400.jpg")))
+                      image_read("https://pbs.twimg.com/profile_images/1348412879100325889/-PIqfVGa_400x400.jpg"),
+                      image_read("https://r.datametria.com/wp-content/uploads/2021/12/agrupado.png")))
 
 df<-left_join(df,tt)
 
@@ -118,9 +119,9 @@ df %>% distinct(`Proyecto de Ley`,Partido, image) %>% group_by(Partido,image) %>
   count() %>% filter(!is.na(Partido)) %>% 
   ggplot(aes(x=reorder(Partido,n),y=n, fill=Partido, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
-                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
   coord_flip()+
-  scale_fill_brewer(palette = "Spectral")+
+  scale_fill_brewer(palette = "Paired")+
   labs(x="Bancadas",y="Número de proyectos",title = "PRESENTACIÓN DE PROYECTOS DE LEY\nBANCADAS INVOLUCRADAS",
        fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
@@ -138,8 +139,8 @@ df %>% distinct(`Proyecto de Ley`,Partido,image) %>% group_by(Partido,image) %>%
   mutate(p=round(n/tot,2)) %>% 
   ggplot(aes(x=reorder(Partido,p),y=p, fill=Partido, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
-                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
-  scale_fill_brewer(palette = "Spectral")+
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
+  scale_fill_brewer(palette = "Paired")+
   labs(x="Bancadas",y="Número de proyectos",title = "PARTICIPACIÓN RELATIVA DE BANCADAS EN LA PRESENTACIÓN\nDE PROYECTOS***.",
        fill="", caption = "Solo proyectos presentados por el congreso.\n***Se entiende como el coeficiente entre proyectos presentados y el número de congresistas por bancada.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
@@ -152,11 +153,11 @@ df %>% distinct(`Proyecto de Ley`,Partido,image) %>% group_by(Partido,image) %>%
 
 #-----
 # Congresistas con más proyectos presentados. 
-df %>% group_by(Partido,Autores,image) %>% count() %>% arrange(-n) %>% head(n=10) %>% 
-  ggplot(aes(x=reorder(Autores,n),y=n, fill=Autores, image=image))+
+df %>% group_by(Autores,image,Partido) %>% count() %>% arrange(-n) %>% head(n=10) %>% 
+  ggplot(aes(x=reorder(Autores,n),y=n, fill=Partido, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
-                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
-  scale_fill_brewer(palette = "Spectral")+
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
+  scale_fill_brewer(palette = "Set1")+
   labs(x="Congresistas",y="Número de proyectos",title = "TOP - 10 CONGRESISTAS\nINVOLUCRADOS EN LA PRESENTACIÓN DE PROYECTOS DE LEY.",
        fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
@@ -170,11 +171,11 @@ df %>% group_by(Partido,Autores,image) %>% count() %>% arrange(-n) %>% head(n=10
 #---- 
 # Congresistas con más proyectos presentados - Autores principales.
 df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% left_join(df) %>% 
-  group_by(Partido,Autores,image) %>% count(sort = T) %>% head(n=10) %>% 
-  ggplot(aes(x=reorder(Autores,n),y=n, fill=Autores, image=image))+
+  group_by(Autores,image,Partido) %>% count(sort = T) %>% head(n=10) %>% 
+  ggplot(aes(x=reorder(Autores,n),y=n, fill=Partido, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
-                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
-  scale_fill_brewer(palette = "Spectral")+
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
+  scale_fill_brewer(palette = "Set1")+
   labs(x="Congresistas",y="Número de proyectos",title = "TOP - 10 CONGRESISTAS COMO PRINCIPALES AUTORES\nEN LA PRESENTACIÓN DE PROYECTOS DE LEY.",
        fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
@@ -299,10 +300,10 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
   dplyr::select(-Estado,-n) %>% distinct() %>% 
   ggplot(aes(x=reorder(Partido,sum),y=sum, fill=Partido, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
-                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
-  scale_fill_brewer(palette = "Spectral")+
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
+  scale_fill_brewer(palette = "Paired")+
   labs(x="Bancadas",y="Número de proyectos publicados o en autógrafa",title = "PROYECTOS DE LEY PUBLICADOS EN EL PERUANO O EN AUTÓGRAFA\nPOR BANCADA.",
-       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       fill="", caption = "Solo proyectos presentados por el congreso.También incluye los proyectos en estado de insistencia y dispensados de publicación en el Peruano.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(x=reorder(Partido,sum),y=sum+.5,label=sum),show.legend=F, bg="white", size=5)+
   coord_flip()+
@@ -320,12 +321,12 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
   mutate(p=round(sum/tot,2)) %>% 
   ggplot(aes(x=reorder(Partido,p),y=p, fill=Partido, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
-                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
-  scale_fill_brewer(palette = "Spectral")+
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
+  scale_fill_brewer(palette = "Paired")+
   labs(x="Bancadas",y="Número de proyectos publicados o en autógrafa",title = "PARTICIPACIÓN EN PROYECTOS DE LEY PUBLICADOS EN EL PERUANO\nO EN AUTÓGRAFA - POR BANCADA.",
-       fill="", caption = "Solo proyectos presentados por el congreso.\n***Se entiende como el coeficiente entre proyectos presentados y el número de congresistas por bancada.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       fill="", caption = "Solo proyectos presentados por el congreso.También incluye los proyectos en estado de insistencia y dispensados de publicación en el Peruano.\n***Se entiende como el coeficiente entre proyectos presentados y el número de congresistas por bancada.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
-  geom_label(aes(x=reorder(Partido,p),y=p+.05,label=p),show.legend=F, bg="white", size=5)+
+  geom_label(aes(x=reorder(Partido,p),y=p+.1,label=p),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
   theme(legend.position = "none",
@@ -334,15 +335,15 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
 
 #-----------------
 # Participación de congresistas en leyes publicadas en el peruano o en autografa.
-df %>% distinct(`Proyecto de Ley`,Estado, Autores,image) %>% group_by(Autores,image) %>% count(Estado) %>% 
+df %>% distinct(`Proyecto de Ley`,Estado,Partido, Autores,image) %>% group_by(Autores,image,Partido) %>% count(Estado) %>% 
   filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% filter(!is.na(Autores)) %>% mutate(sum=sum(n)) %>% 
   dplyr::select(-Estado,-n) %>% distinct() %>% arrange(-sum) %>% head(n=8) %>% 
-  ggplot(aes(x=reorder(Autores,sum),y=sum, fill=Autores, image=image))+
+  ggplot(aes(x=reorder(Autores,sum),y=sum, fill=Partido, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
-                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
-  scale_fill_brewer(palette = "Spectral")+
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
+  scale_fill_brewer(palette = "Set1")+
   labs(x="Congresistas",y="Número de proyectos publicados o en autógrafa",title = "TOP 8 - CONGRESISTAS.\nCON MÁS PROYECTOS DE LEY PUBLICADOS EN EL PERUANO\nO EN AUTÓGRAFA.",
-       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       fill="", caption = "Solo proyectos presentados por el congreso.También incluye los proyectos en estado de insistencia y dispensados de publicación en el Peruano.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(x=reorder(Autores,sum),y=sum+.5,label=sum),show.legend=F, bg="white", size=5)+
   coord_flip()+
@@ -354,13 +355,13 @@ df %>% distinct(`Proyecto de Ley`,Estado, Autores,image) %>% group_by(Autores,im
 #------------------------
 # Congresistas principales en leyes publicadas en el peruano o en autógrafa.
 df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% left_join(df) %>% 
-  filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% group_by(Autores, image) %>% count(sort = T) %>% head(n=8) %>% 
-  ggplot(aes(x=reorder(Autores,n),y=n, fill=Autores, image=image))+
+  filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% group_by(Autores, image,Partido) %>% count(sort = T) %>% head(n=8) %>% 
+  ggplot(aes(x=reorder(Autores,n),y=n, fill=Partido, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
-                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5)+
-  scale_fill_brewer(palette = "Spectral")+
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
+  scale_fill_brewer(palette = "Set1")+
   labs(x="Congresistas",y="Número de proyectos publicados o en autógrafa",title = "TOP 8 - CONGRESISTAS COMO AUTORES PRINCIPALES\nCON MÁS PROYECTOS DE LEY PUBLICADOS EN EL PERUANO\nO EN AUTÓGRAFA.",
-       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       fill="", caption = "Solo proyectos presentados por el congreso.También incluye los proyectos en estado de insistencia y dispensados de publicación en el Peruano.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
   geom_label(aes(x=reorder(Autores,n),y=n+.1,label=n),show.legend=F, bg="white", size=5)+
   coord_flip()+
