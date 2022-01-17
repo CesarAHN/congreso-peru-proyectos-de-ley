@@ -24,6 +24,12 @@ Esta información se extrajo desde el portal Voto informado.  ---> https://www.c
 
 Los códigos lo puede encontrar en el repositorio con el nombre de `script_congreso_pl.R` y el data frame que compila toda la información es `df`.
 
+**IMPORTANTE:**
+
+Los proyectos de ley son presentados por un autor principal, pero a este se pueden unir más congresistas que apoyan el proyecto a los cuales se les llama "coautores". En los gráficos siguientes cuando se menciona la palabra "involucrados" se hace referencia a los congresistas que son autores o coautores en un determinado proyecto de ley, cuando se indica la palabra "autores principales" se hace referencia al congresista que presentó el proyecto de ley lo que implica que él generó el documento que contiene la exposición de motivos. 
+
+Se aclara esta situación, ya que los congresistas que son autores principales son los que en realidad juntamente con sus asesores crean el proyecto de ley, por otra parte, los congresistas que son coautores solo apoyan en la presentación.
+
 ## ¿CÓMO ESTÁ TRABAJANDO EL CONGRESO?
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
@@ -217,6 +223,70 @@ df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% lef
         plot.caption = element_text(face = "bold", size = 7),
         plot.title = element_text(face = "bold"))
 ```
+
+#### Congresistas con menos proyectos de ley presentados. 
+Todos los congresistas al menos han estado involucrados en la presentación de un proyecto de ley.
+
+```{r, eval=FALSE, echo=FALSE}
+sum(is.na(left_join(congresistas, df[,c(4,6)], by="Autores")$Estado)) # No hay congresista que no
+# haya participado en la presentación de algún proyectode ley. 
+```
+
+```{r, fig.width=10, fig.height=6, echo=FALSE, message=FALSE, warning=FALSE}
+df %>% group_by(Autores,image,Partido) %>% count() %>% arrange(-n) %>% tail(n=11) %>% 
+  filter(!is.na(Autores)) %>% 
+  ggplot(aes(x=reorder(Autores,-n),y=n, fill=Partido, image=image))+
+  geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
+  scale_fill_brewer(palette = "Set1")+
+  labs(x="Congresistas",y="Número de proyectos",title = "LOW - 10 CONGRESISTAS\nINVOLUCRADOS EN LA PRESENTACIÓN DE PROYECTOS DE LEY.",
+       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Congresistas con menos proyectos de Ley.\nActualizado al: ",fecha))+
+  geom_label(aes(x=reorder(Autores,-n),y=n+.7,label=n),show.legend=F, bg="white", size=5)+
+  coord_flip()+
+  theme_bw()+
+  theme(legend.position = "none",
+        plot.caption = element_text(face = "bold", size = 7),
+        plot.title = element_text(face = "bold"))
+```
+
+#### Congresistas con menos proyectos de ley presentados como autores principales.
+
+Solo el congresista:
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+congresistas %>% 
+  left_join(df %>% group_by(`Proyecto de Ley`) %>% 
+              summarise(Autores=first(Autores)) %>% distinct(Autores, keep_all=T)) %>% 
+  filter(is.na(keep_all)) %>% dplyr::select(Autores, Partido)
+```
+
+No ha presentado proyectos de ley como autor principal. 
+
+---
+
+```{r, fig.width=10, fig.height=6, echo=FALSE, message=FALSE, warning=FALSE}
+df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% left_join(df) %>% 
+  group_by(Autores,image,Partido) %>% count(sort = T) %>% filter(!grepl("HERRERA MAMANI",Autores)) %>% 
+  tail(n=10) %>% ggplot(aes(x=reorder(Autores,-n),y=n, fill=Partido, image=image))+
+  geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
+  scale_fill_brewer(palette = "Set1")+
+  labs(x="Congresistas",y="Número de proyectos",title = "LOW - 10 CONGRESISTAS COMO PRINCIPALES AUTORES\nEN LA PRESENTACIÓN DE PROYECTOS DE LEY.",
+       fill="", caption = paste0("Solo proyectos presentados por el congreso.\n",
+                                 "FUENTE: CONGRESO DE LA REPÚBLICA."),
+       subtitle=paste0("Congresistas con menos proyectos de Ley.\nActualizado al: ",fecha))+
+  geom_label(aes(x=reorder(Autores,-n),y=n+.05,label=n),show.legend=F, bg="white", size=5)+
+  coord_flip()+
+  theme_bw()+
+  theme(legend.position = "none",
+        plot.caption = element_text(face = "bold", size = 7),
+        plot.title = element_text(face = "bold"))
+```
+
+
+
+
 
 
 #### Proyectos de ley presentados por regiones.
@@ -549,7 +619,7 @@ plot_grid(pp_1,pp_2,pp_3,pp_4, ncol = 2)
 
 ## Actualizaciones.
 
-La primera versión se publicó el día **11/12/2021**, pero en los siguientes días se ha venido actualizando la información, en un principio se pensó hasta el 15 de diciembre, pero el congreso amplió su legislatura y estará sesionando hasta el 17 de enero de 2022, día que entrará en receso el congreso. 
+La primera versión se publicó el día **11/12/2021**, pero en los siguientes días se ha venido actualizando la información, en un principio se pensó hasta el 15 de diciembre, pero el congreso amplió su legislatura por segunda vez y estará sesionando hasta el 02 de febrero de 2022, día que entrará en receso el congreso. 
 
 Para la extracción, limpieza y gráficos del repositorio se usa el software R en su totalidad. Si tiene alguna sugerencia o comentario puede enviarnos un correo a: **pe.cesar.huamani.n@uni.pe** o **cesar.huamani@datametria.com**
 

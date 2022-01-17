@@ -186,6 +186,54 @@ df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% lef
         plot.caption = element_text(face = "bold", size = 7),
         plot.title = element_text(face = "bold"))
 
+#----------------------------------------------------------------------------------
+# Top 10 congresistas con menos proyectos de ley presentados.
+sum(is.na(left_join(congresistas, df[,c(4,6)], by="Autores")$Estado)) # No hay congresista que no
+# haya participado en la presentación de algún proyectode ley. 
+
+df %>% group_by(Autores,image,Partido) %>% count() %>% arrange(-n) %>% tail(n=11) %>% 
+  filter(!is.na(Autores)) %>% 
+  ggplot(aes(x=reorder(Autores,-n),y=n, fill=Partido, image=image))+
+  geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
+  scale_fill_brewer(palette = "Set1")+
+  labs(x="Congresistas",y="Número de proyectos",title = "LOW - 10 CONGRESISTAS\nINVOLUCRADOS EN LA PRESENTACIÓN DE PROYECTOS DE LEY.",
+       fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
+       subtitle=paste0("Congresistas con menos proyectos de Ley.\nActualizado al: ",fecha))+
+  geom_label(aes(x=reorder(Autores,-n),y=n+.5,label=n),show.legend=F, bg="white", size=5)+
+  coord_flip()+
+  theme_bw()+
+  theme(legend.position = "none",
+        plot.caption = element_text(face = "bold", size = 7),
+        plot.title = element_text(face = "bold"))
+
+#---------------------------------------------------------------
+# Como autores principales.
+
+# El único que no ha presentado proyectos de ley como autor principal es:
+congresistas %>% 
+  left_join(df %>% group_by(`Proyecto de Ley`) %>% 
+              summarise(Autores=first(Autores)) %>% distinct(Autores, keep_all=T)) %>% 
+  filter(is.na(keep_all)) %>% dplyr::select(Autores, Partido)
+
+# Congresistas con menos proyectos presentados - Autores principales.
+df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% left_join(df) %>% 
+  group_by(Autores,image,Partido) %>% count(sort = T) %>% filter(!grepl("HERRERA MAMANI",Autores)) %>% 
+  tail(n=10) %>% ggplot(aes(x=reorder(Autores,-n),y=n, fill=Partido, image=image))+
+  geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
+                   ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
+  scale_fill_brewer(palette = "Set1")+
+  labs(x="Congresistas",y="Número de proyectos",title = "LOW - 10 CONGRESISTAS COMO PRINCIPALES AUTORES\nEN LA PRESENTACIÓN DE PROYECTOS DE LEY.",
+       fill="", caption = paste0("Solo proyectos presentados por el congreso.\n",
+                                 "FUENTE: CONGRESO DE LA REPÚBLICA."),
+       subtitle=paste0("Congresistas con menos proyectos de Ley.\nActualizado al: ",fecha))+
+  geom_label(aes(x=reorder(Autores,-n),y=n+.1,label=n),show.legend=F, bg="white", size=5)+
+  coord_flip()+
+  theme_bw()+
+  theme(legend.position = "none",
+        plot.caption = element_text(face = "bold", size = 7),
+        plot.title = element_text(face = "bold"))
+
 #-----
 # Proyectos por la región del congresista.
 Peru<-getData('GADM', country='Peru', level=1) %>% st_as_sf() # Mapa de Perú. 
@@ -382,6 +430,7 @@ library(viridis)
 library(widyr)
 library(ggraph)
 library(igraph)
+library(cowplot)
 
 no_word <- as.data.frame(c(stopwords("es"),"n"))
 names(no_word) <- "word"
