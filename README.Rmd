@@ -20,7 +20,7 @@ Se crea este repositorio con el fin de poder conocer cómo están trabajando los
 
 Se muestra información del número de proyectos de ley y leyes por bancadas, regiones y por congresistas. 
 
-Esta información se extrajo desde el portal Voto informado.  ---> https://www.congreso.gob.pe/
+Esta información se extrajo desde el portal del congreso de la república  ---> https://www.congreso.gob.pe/
 
 Los códigos lo puede encontrar en el repositorio con el nombre de `script_congreso_pl.R` y el data frame que compila toda la información es `df`.
 
@@ -159,7 +159,7 @@ df %>% distinct(`Proyecto de Ley`,Partido, image) %>% group_by(Partido,image) %>
   labs(x="Bancadas",y="Número de proyectos",title = "PRESENTACIÓN DE PROYECTOS DE LEY\nBANCADAS INVOLUCRADAS",
        fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
-  geom_label(aes(x=reorder(Partido,n),y=n+10,label=n),show.legend=F, bg="white", size=5)+
+  geom_label(aes(x=reorder(Partido,n),y=n+20,label=n),show.legend=F, bg="white", size=5)+
   theme_bw()+
   theme(legend.position = "none",
         plot.caption = element_text(face = "bold", size = 7),
@@ -410,7 +410,7 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
   labs(x="Bancadas",y="Número de proyectos publicados o en autógrafa",title = "PROYECTOS DE LEY PUBLICADOS EN EL PERUANO O EN AUTÓGRAFA\nPOR BANCADA.",
        fill="", caption = "Solo proyectos presentados por el congreso.También incluye los proyectos en estado de insistencia y dispensados de publicación en el Peruano.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
-  geom_label(aes(x=reorder(Partido,sum),y=sum+.5,label=sum),show.legend=F, bg="white", size=5)+
+  geom_label(aes(x=reorder(Partido,sum),y=sum+1,label=sum),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
   theme(legend.position = "none",
@@ -622,5 +622,3 @@ plot_grid(pp_1,pp_2,pp_3,pp_4, ncol = 2)
 La primera versión se publicó el día **11/12/2021**, pero en los siguientes días se ha venido actualizando la información, en un principio se pensó hasta el 15 de diciembre, pero el congreso amplió su legislatura por segunda vez y estará sesionando hasta el 02 de febrero de 2022, día que entrará en receso el congreso. 
 
 Para la extracción, limpieza y gráficos del repositorio se usa el software R en su totalidad. Si tiene alguna sugerencia o comentario puede enviarnos un correo a: **pe.cesar.huamani.n@uni.pe** o **cesar.huamani@datametria.com**
-
-Muchas gracias.

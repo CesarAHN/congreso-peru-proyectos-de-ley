@@ -3,7 +3,7 @@
 
 # ¿CÓMO ESTÁN TRABAJANDO LOS CONGRESISTAS DEL PERÚ - PROYECTOS DE LEY?
 
-Actualizado a **2022-01-17**.
+Actualizado a **2022-01-18**.
 
 Se crea este repositorio con el fin de poder conocer cómo están
 trabajando los congresistas de la república del Perú, específicamente en
@@ -13,8 +13,8 @@ convertirse en ley.
 Se muestra información del número de proyectos de ley y leyes por
 bancadas, regiones y por congresistas.
 
-Esta información se extrajo desde el portal Voto informado. —&gt;
-<https://www.congreso.gob.pe/>
+Esta información se extrajo desde el portal del congreso de la república
+—&gt; <https://www.congreso.gob.pe/>
 
 Los códigos lo puede encontrar en el repositorio con el nombre de
 `script_congreso_pl.R` y el data frame que compila toda la información
@@ -144,5 +144,3 @@ Para la extracción, limpieza y gráficos del repositorio se usa el
 software R en su totalidad. Si tiene alguna sugerencia o comentario
 puede enviarnos un correo a: **<pe.cesar.huamani.n@uni.pe>** o
 **<cesar.huamani@datametria.com>**
-
-Muchas gracias.

@@ -125,7 +125,7 @@ df %>% distinct(`Proyecto de Ley`,Partido, image) %>% group_by(Partido,image) %>
   labs(x="Bancadas",y="Número de proyectos",title = "PRESENTACIÓN DE PROYECTOS DE LEY\nBANCADAS INVOLUCRADAS",
        fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
-  geom_label(aes(x=reorder(Partido,n),y=n+10,label=n),show.legend=F, bg="white", size=5)+
+  geom_label(aes(x=reorder(Partido,n),y=n+20,label=n),show.legend=F, bg="white", size=5)+
   theme_bw()+
   theme(legend.position = "none",
         plot.caption = element_text(face = "bold", size = 7),
@@ -353,7 +353,7 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
   labs(x="Bancadas",y="Número de proyectos publicados o en autógrafa",title = "PROYECTOS DE LEY PUBLICADOS EN EL PERUANO O EN AUTÓGRAFA\nPOR BANCADA.",
        fill="", caption = "Solo proyectos presentados por el congreso.También incluye los proyectos en estado de insistencia y dispensados de publicación en el Peruano.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
-  geom_label(aes(x=reorder(Partido,sum),y=sum+.5,label=sum),show.legend=F, bg="white", size=5)+
+  geom_label(aes(x=reorder(Partido,sum),y=sum+1,label=sum),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
   theme(legend.position = "none",
