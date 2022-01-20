@@ -219,7 +219,8 @@ congresistas %>%
 # Congresistas con menos proyectos presentados - Autores principales.
 df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% left_join(df) %>% 
   group_by(Autores,image,Partido) %>% count(sort = T) %>% filter(!grepl("HERRERA MAMANI",Autores)) %>% 
-  tail(n=10) %>% ggplot(aes(x=reorder(Autores,-n),y=n, fill=Partido, image=image))+
+  filter(!is.na(Autores)) %>% tail(n=10) %>% 
+  ggplot(aes(x=reorder(Autores,-n),y=n, fill=Partido, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
   scale_fill_brewer(palette = "Set1")+

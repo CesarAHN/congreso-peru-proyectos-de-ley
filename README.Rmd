@@ -268,7 +268,8 @@ No ha presentado proyectos de ley como autor principal.
 ```{r, fig.width=10, fig.height=6, echo=FALSE, message=FALSE, warning=FALSE}
 df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% left_join(df) %>% 
   group_by(Autores,image,Partido) %>% count(sort = T) %>% filter(!grepl("HERRERA MAMANI",Autores)) %>% 
-  tail(n=10) %>% ggplot(aes(x=reorder(Autores,-n),y=n, fill=Partido, image=image))+
+  filter(!is.na(Autores)) %>% tail(n=10) %>% 
+  ggplot(aes(x=reorder(Autores,-n),y=n, fill=Partido, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
   scale_fill_brewer(palette = "Set1")+
@@ -276,7 +277,7 @@ df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% lef
        fill="", caption = paste0("Solo proyectos presentados por el congreso.\n",
                                  "FUENTE: CONGRESO DE LA REPÚBLICA."),
        subtitle=paste0("Congresistas con menos proyectos de Ley.\nActualizado al: ",fecha))+
-  geom_label(aes(x=reorder(Autores,-n),y=n+.05,label=n),show.legend=F, bg="white", size=5)+
+  geom_label(aes(x=reorder(Autores,-n),y=n+.1,label=n),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
   theme(legend.position = "none",
