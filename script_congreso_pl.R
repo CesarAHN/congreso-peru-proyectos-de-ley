@@ -179,7 +179,7 @@ df %>% group_by(`Proyecto de Ley`) %>% summarise(Autores=first(Autores)) %>% lef
   labs(x="Congresistas",y="Número de proyectos",title = "TOP - 10 CONGRESISTAS COMO PRINCIPALES AUTORES\nEN LA PRESENTACIÓN DE PROYECTOS DE LEY.",
        fill="", caption = "Solo proyectos presentados por el congreso.\nFUENTE: CONGRESO DE LA REPÚBLICA.",
        subtitle=paste0("Actualizado al: ",fecha))+
-  geom_label(aes(x=reorder(Autores,n),y=n+1,label=n),show.legend=F, bg="white", size=5)+
+  geom_label(aes(x=reorder(Autores,n),y=n+2,label=n),show.legend=F, bg="white", size=5)+
   coord_flip()+
   theme_bw()+
   theme(legend.position = "none",
@@ -386,7 +386,7 @@ df %>% distinct(`Proyecto de Ley`,Estado, Partido,image) %>% group_by(Partido,im
 # Participación de congresistas en leyes publicadas en el peruano o en autografa.
 df %>% distinct(`Proyecto de Ley`,Estado,Partido, Autores,image) %>% group_by(Autores,image,Partido) %>% count(Estado) %>% 
   filter(grepl("AUTOGRAFA|PERUANO",Estado)) %>% filter(!is.na(Autores)) %>% mutate(sum=sum(n)) %>% 
-  dplyr::select(-Estado,-n) %>% distinct() %>% arrange(-sum) %>% head(n=8) %>% 
+  dplyr::select(-Estado,-n) %>% distinct() %>% arrange(-sum) %>%  head(n=8) %>% 
   ggplot(aes(x=reorder(Autores,sum),y=sum, fill=Partido, image=image))+
   geom_isotype_col(img_height = grid::unit(1, "null"), img_width = NULL,
                    ncol = 1, nrow = 1, hjust = 1, vjust = 0.5, colour="black")+
