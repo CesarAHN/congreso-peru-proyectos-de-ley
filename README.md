@@ -3,7 +3,7 @@
 
 # ¿CÓMO ESTÁN TRABAJANDO LOS CONGRESISTAS DEL PERÚ - PROYECTOS DE LEY?
 
-Actualizado a **2022-01-21**.
+Actualizado a **2022-01-24**.
 
 Se crea este repositorio con el fin de poder conocer cómo están
 trabajando los congresistas de la república del Perú, específicamente en
