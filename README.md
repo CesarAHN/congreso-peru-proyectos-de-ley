@@ -3,7 +3,7 @@
 
 # ¿CÓMO ESTÁN TRABAJANDO LOS CONGRESISTAS DEL PERÚ - PROYECTOS DE LEY?
 
-Actualizado a **2022-01-24**.
+Actualizado a **2022-01-26**.
 
 Se crea este repositorio con el fin de poder conocer cómo están
 trabajando los congresistas de la república del Perú, específicamente en
@@ -67,8 +67,8 @@ presentación de un proyecto de ley.
 
 Solo el congresista:
 
-    #                   Autores          Partido
-    # 1 BERMEJO ROJAS GUILLERMO PERU DEMOCRATICO
+    # [1] Autores Partido
+    # <0 rows> (or 0-length row.names)
 
 No ha presentado proyectos de ley como autor principal.
 
