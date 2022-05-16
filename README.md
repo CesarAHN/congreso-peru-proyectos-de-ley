@@ -3,7 +3,7 @@
 
 # ¿CÓMO ESTÁN TRABAJANDO LOS CONGRESISTAS DEL PERÚ - PROYECTOS DE LEY?
 
-Actualizado a **2022-04-01**.
+Actualizado a **2022-05-16**.
 
 Se crea este repositorio con el fin de poder conocer cómo están
 trabajando los congresistas de la república del Perú, específicamente en
@@ -41,6 +41,8 @@ apoyan en la presentación.
 ### PROYECTOS DE LEY.
 
 #### Bancadas involucradas en la presentación de proyectos de ley.
+
+    # Warning: Removed 1 rows containing missing values (geom_isotype_col).
 
 ![](README-unnamed-chunk-3-1.png)<!-- -->
 
@@ -101,6 +103,8 @@ No ha presentado proyectos de ley como autor principal.
 ![](README-unnamed-chunk-12-1.png)<!-- -->
 
 #### Proyectos de ley publicados o en autografa por bancada.
+
+    # Warning: Removed 1 rows containing missing values (geom_isotype_col).
 
 ![](README-unnamed-chunk-13-1.png)<!-- -->
 
